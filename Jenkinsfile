@@ -1,27 +1,21 @@
-pipeline{
-  agent any
-  stages{
-  
-    stage ("build"){
-      steps {
-        echo "building the application.."
-        script{
-          def test = 2 + 2 > 3 ? 'cool' : 'not so cool'
-          echo test
-        }
-      }
-    }
-    
-    stage ("test"){
-      steps {
-        echo "testing the application.."
-      }
-    }    
+pipeline {
+    agent any
 
-    stage ("deploy"){
-      steps {
-        echo "deploying the application..."
-      }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/skrameshkumartcspractice/DevOps-Demo-WebApp.git']]])
+            }
+        }
+        stage('build') {
+            steps {
+                echo 'building the applicaiton...'
+            }
+        }        
+        stage('test') {
+            steps {
+                echo 'testing the application...'
+            }
+        }        
     }
-  }
 }
