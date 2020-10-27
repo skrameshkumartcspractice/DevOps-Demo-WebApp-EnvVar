@@ -26,6 +26,13 @@ pipeline {
                 sh 'mvn clean install' 
             }
         }        
+        stage('Test Deploy') {
+            steps {
+                sshagent(['deploy_user']) {
+                    sh "scp -o StrictHostKeyChecking=no target/AVNCommunication-1.0.war azureuser@52.183.96.227:/var/lib/tomcat8/"webapps
+                }
+            }
+        }                
         stage('test') {
             steps {
                 echo 'testing the application...'
