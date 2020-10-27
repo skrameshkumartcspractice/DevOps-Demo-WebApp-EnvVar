@@ -30,6 +30,7 @@ pipeline {
             steps {
                 sshagent(['deploy_user']) {
                     sh "scp -o StrictHostKeyChecking=no target/AVNCommunication-1.0.war azureuser@52.183.96.227:/var/lib/tomcat8/webapps/QAWebapp.war"
+                    sh "scp -o StrictHostKeyChecking=no -r target/AVNCommunication-1.0 azureuser@52.183.96.227:/var/lib/tomcat8/webapps/QAWebapp"                     
                 }
             }
         }                
