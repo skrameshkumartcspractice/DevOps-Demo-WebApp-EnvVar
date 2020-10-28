@@ -64,6 +64,11 @@ pipeline {
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '\\functionaltest\\target\\surefire-reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
             }
         }           
+        stage('Performance Test'){
+            steps{
+                blazeMeterTest credentialsId: 'Blazemeter', testId: '8488353.taurus', workspaceId: '646652'
+            }
+        }                
         stage('Prod Deploy') {
             steps {
                 sshagent(['deploy_user_prod']) {
@@ -72,10 +77,11 @@ pipeline {
                 }
             }
         }                                          
-        stage('test') {
+        stage('Sanity test') {
             steps {
-                echo 'testing the application...'
-                echo 'test demo the application...'
+                echo 'running sanity test for the applicaiton...'
+                sh 'mvn -f Acceptancetest/pom.xml test'
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '\\Acceptancetest\\target\\surefire-reports', reportFiles: 'index.html', reportName: 'Sanity Test Report', reportTitles: ''])
             }
         }        
     }
