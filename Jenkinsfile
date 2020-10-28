@@ -63,7 +63,15 @@ pipeline {
                 sh 'mvn -f functionaltest/pom.xml test'
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '\\functionaltest\\target\\surefire-reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
             }
-        }                     
+        }           
+        stage('Prod Deploy') {
+            steps {
+                sshagent(['deploy_user_prod']) {
+                    sh "scp -o StrictHostKeyChecking=no target/AVNCommunication-1.0.war azureuser@168.62.164.231:/var/lib/tomcat8/webapps/ProdWebapp.war"
+                    sh "scp -o StrictHostKeyChecking=no -r target/AVNCommunication-1.0 azureuser@168.62.164.231:/var/lib/tomcat8/webapps/ProdWebapp"                     
+                }
+            }
+        }                                          
         stage('test') {
             steps {
                 echo 'testing the application...'
