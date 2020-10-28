@@ -4,7 +4,10 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                slackSend channel: 'tcsdevops-casestudy', message: 'my-pipeline triggered'
+                slackSend channel: 'tcsdevops-casestudy', message: 'Checking out project from git'
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/skrameshkumartcspractice/DevOps-Demo-WebApp.git']]])
+                slackSend channel: 'tcsdevops-casestudy', message: 'Checkout complete'
             }
         }
         stage('Sonarqube') {
@@ -12,22 +15,25 @@ pipeline {
                 scannerHome = tool 'sonarqubescanner'
             }
             steps {
+                slackSend channel: 'tcsdevops-casestudy', message: 'Static code analysis is starting..'
                 withSonarQubeEnv('sonarqube') {
                     sh """${scannerHome}/bin/sonar-scanner"""
                 }
                 timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
+                slackSend channel: 'tcsdevops-casestudy', message: 'Static code analysis complete..'
             }
         }                
         stage('build') {
             steps {
-                echo 'building the applicaiton...'
+                slackSend channel: 'tcsdevops-casestudy', message: 'Building the application..'
                 sh 'mvn clean install' 
             }
         }        
         stage('Test Deploy') {
             steps {
+                slackSend channel: 'tcsdevops-casestudy', message: 'Deploying the app to test..'
                 sshagent(['deploy_user']) {
                     sh "scp -o StrictHostKeyChecking=no target/AVNCommunication-1.0.war azureuser@52.183.96.227:/var/lib/tomcat8/webapps/QAWebapp.war"
                     sh "scp -o StrictHostKeyChecking=no -r target/AVNCommunication-1.0 azureuser@52.183.96.227:/var/lib/tomcat8/webapps/QAWebapp"                     
@@ -36,6 +42,7 @@ pipeline {
         }                
         stage('Artifactory') {
             steps {
+                slackSend channel: 'tcsdevops-casestudy', message: 'Archiving the artifacts..'
                 script{
                     // Get Artifactory server instance, defined in the Artifactory Plugin administration page.
                     def server = Artifactory.server "artifactory"
@@ -59,18 +66,20 @@ pipeline {
         }   
         stage('selenium test') {
             steps {
-                echo 'running selenium test the applicaiton...'
+                slackSend channel: 'tcsdevops-casestudy', message: 'Running UI test on Test machine..'
                 sh 'mvn -f functionaltest/pom.xml test'
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '\\functionaltest\\target\\surefire-reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
             }
         }           
-        stage('Performance Test'){
-            steps{
-                blazeMeterTest credentialsId: 'Blazemeter', testId: '8488353.taurus', workspaceId: '646652'
-            }
-        }                
+        // stage('Performance Test'){
+        //     steps{
+        //         slackSend channel: 'tcsdevops-casestudy', message: 'Running performance testing on Test Machine..'        
+        //         blazeMeterTest credentialsId: 'Blazemeter', testId: '8488353.taurus', workspaceId: '646652'
+        //     }
+        // }                
         stage('Prod Deploy') {
             steps {
+                slackSend channel: 'tcsdevops-casestudy', message: 'Deploying the app to Prod..'
                 sshagent(['deploy_user_prod']) {
                     sh "scp -o StrictHostKeyChecking=no target/AVNCommunication-1.0.war azureuser@168.62.164.231:/var/lib/tomcat8/webapps/ProdWebapp.war"
                     sh "scp -o StrictHostKeyChecking=no -r target/AVNCommunication-1.0 azureuser@168.62.164.231:/var/lib/tomcat8/webapps/ProdWebapp"                     
@@ -79,10 +88,15 @@ pipeline {
         }                                          
         stage('Sanity test') {
             steps {
-                echo 'running sanity test for the applicaiton...'
+                slackSend channel: 'tcsdevops-casestudy', message: 'performing Sanity test in Prod..'
                 sh 'mvn -f Acceptancetest/pom.xml test'
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '\\Acceptancetest\\target\\surefire-reports', reportFiles: 'index.html', reportName: 'Sanity Test Report', reportTitles: ''])
             }
         }        
+    }
+    post{
+        success {
+            slackSend channel: 'tcsdevops-casestudy', message: 'Successfull tests and deployment in Test and Prod servers'
+        }
     }
 }
