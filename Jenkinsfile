@@ -56,7 +56,14 @@ pipeline {
                         server.publishBuildInfo buildInfo
                 }
             }
-        }        
+        }   
+        stage('selenium test') {
+            steps {
+                echo 'running selenium test the applicaiton...'
+                sh 'mvn -f functionaltest/pom.xml test'
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '\\functionaltest\\target\\surefire-reports', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
+            }
+        }                     
         stage('test') {
             steps {
                 echo 'testing the application...'
