@@ -30,6 +30,11 @@ pipeline {
                 slackSend channel: 'tcsdevops-casestudy', message: 'Building the application..'
                 sh 'mvn clean install' 
             }
+            post{
+                always{
+                    jiraSendBuildInfo branch: '', site: 'tcsdevopscs.atlassian.net'
+                }                
+            }
         }        
         stage('Test Deploy') {
             steps {
