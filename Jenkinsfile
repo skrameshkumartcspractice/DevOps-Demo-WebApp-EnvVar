@@ -32,7 +32,7 @@ pipeline {
             }
             post{
                 always{
-                    jiraSendBuildInfo branch: '', site: 'tcsdevopscs.atlassian.net'
+                    jiraSendBuildInfo branch: 'DEV-1', site: 'tcsdevopscs.atlassian.net'
                 }                
             }
         }        
