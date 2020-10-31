@@ -31,7 +31,9 @@ pipeline {
                 sh 'mvn clean install' 
             }
             post{
-                jiraSendBuildInfo branch: '', site: 'tcsdevopscs.atlassian.net'
+                always{
+                    jiraSendBuildInfo branch: '', site: 'tcsdevopscs.atlassian.net'
+                }                
             }
         }        
         stage('Test Deploy') {
