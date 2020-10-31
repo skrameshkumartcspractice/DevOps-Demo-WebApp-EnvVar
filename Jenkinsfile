@@ -44,6 +44,11 @@ pipeline {
                     sh "scp -o StrictHostKeyChecking=no -r target/AVNCommunication-1.0 azureuser@52.183.96.227:/var/lib/tomcat8/webapps/QAWebapp"                     
                 }
             }
+            post{
+                always{
+                    jiraSendDeploymentInfo environmentId: 'us-prod-1', environmentName: 'us-prod-1', environmentType: 'testing', serviceIds: [''], site: 'tcsdevopscs.atlassian.net', state: 'unknown'
+                }
+            }            
         }                
         stage('Artifactory') {
             steps {
@@ -90,6 +95,11 @@ pipeline {
                     sh "scp -o StrictHostKeyChecking=no -r target/AVNCommunication-1.0 azureuser@168.62.164.231:/var/lib/tomcat8/webapps/ProdWebapp"                     
                 }
             }
+            post{
+                always{
+                    jiraSendDeploymentInfo environmentId: 'us-prod-1', environmentName: 'us-prod-1', environmentType: 'production', serviceIds: [''], site: 'tcsdevopscs.atlassian.net', state: 'unknown'
+                }
+            }            
         }                                          
         stage('Sanity test') {
             steps {
