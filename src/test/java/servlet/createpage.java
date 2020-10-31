@@ -99,8 +99,6 @@ public class createpage extends HttpServlet {
 	{
 	throw new RuntimeException("Cannot connect the database!", e);		
 		}
-	}
-	
-	
+	}	
 }
 
