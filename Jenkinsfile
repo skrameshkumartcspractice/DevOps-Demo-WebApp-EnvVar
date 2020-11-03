@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     stages {
         stage('Checkout') {
             steps {
@@ -21,7 +20,7 @@ pipeline {
                         }
                     }                    
                 }
-                
+                echo commitMessaes
             }
         }
         stage('Sonarqube') {
