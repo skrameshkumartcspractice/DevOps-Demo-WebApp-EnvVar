@@ -9,6 +9,8 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/skrameshkumartcspractice/DevOps-Demo-WebApp.git']]])
                 slackSend channel: 'tcsdevops-casestudy', message: 'Checkout complete'
                 echo "env.GIT_COMMIT ${env.GIT_COMMIT}"
+                thefile= sh 'git log --oneline -1 ${env.GIT_COMMIT}'
+                echo thefile
             }
         }
         stage('Sonarqube') {
