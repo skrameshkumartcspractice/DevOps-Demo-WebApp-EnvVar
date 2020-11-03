@@ -20,7 +20,7 @@ pipeline {
                         }
                     }                    
                 }
-                echo commitMessaes
+                echo ${commitMessaes}
             }
         }
         stage('Sonarqube') {
