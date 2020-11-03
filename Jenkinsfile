@@ -8,6 +8,7 @@ pipeline {
                 slackSend channel: 'tcsdevops-casestudy', message: 'Checking out project from git'
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/skrameshkumartcspractice/DevOps-Demo-WebApp.git']]])
                 slackSend channel: 'tcsdevops-casestudy', message: 'Checkout complete'
+                echo "env.GIT_COMMIT ${env.GIT_COMMIT}"
             }
         }
         stage('Sonarqube') {
