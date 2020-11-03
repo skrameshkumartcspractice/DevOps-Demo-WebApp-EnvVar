@@ -1,3 +1,4 @@
+def commitMessages = ""
 pipeline {
     agent any
     stages {
@@ -8,8 +9,7 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/skrameshkumartcspractice/DevOps-Demo-WebApp.git']]])
                 slackSend channel: 'tcsdevops-casestudy', message: 'Checkout complete'
                 echo "env.GIT_COMMIT ${env.GIT_COMMIT}"
-                script{
-                    def commitMessages = ""
+                script{                    
                     def changeLogSets = currentBuild.changeSets
                     for (int i = 0; i < changeLogSets.size(); i++) {
                         def entries = changeLogSets[i].items
