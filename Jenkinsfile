@@ -31,7 +31,7 @@ pipeline {
             }
             post{
                 always{
-                    jiraSendBuildInfo branch: 'DEV-2', site: 'tcsdevopscs.atlassian.net'
+                    jiraSendBuildInfo branch: 'DEV-3', site: 'tcsdevopscs.atlassian.net'
                 }                
             }
         }        
@@ -45,7 +45,7 @@ pipeline {
             }
             post{
                 always{
-                    jiraAddComment comment: "Deploy to Test was successful ${env.JOB_NAME} ${BUILD_NUMBER}", idOrKey: 'DEV-2', site: 'jira'
+                    jiraAddComment comment: "Deploy to Test was successful ${env.JOB_NAME} ${BUILD_NUMBER}", idOrKey: 'DEV-3', site: 'jira'
                     jiraSendDeploymentInfo environmentId: 'us-prod-1', environmentName: 'us-prod-1', environmentType: 'testing', serviceIds: [''], site: 'tcsdevopscs.atlassian.net', state: 'successful'
                 }
             }            
@@ -97,7 +97,7 @@ pipeline {
             }
             post{
                 always{
-                    jiraAddComment comment: "Deploy to Prod was successful ${JOB_NAME} ${BUILD_NUMBER}", idOrKey: 'DEV-2', site: 'jira'
+                    jiraAddComment comment: "Deploy to Prod was successful ${JOB_NAME} ${BUILD_NUMBER}", idOrKey: 'DEV-3', site: 'jira'
                     jiraSendDeploymentInfo environmentId: 'us-prod-1', environmentName: 'us-prod-1', environmentType: 'production', serviceIds: [''], site: 'tcsdevopscs.atlassian.net', state: 'successful'
                 }
             }            
