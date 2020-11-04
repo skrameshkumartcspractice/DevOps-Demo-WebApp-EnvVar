@@ -16,11 +16,19 @@ public class cancelpage extends HttpServlet {
 				PrintWriter out=res.getWriter();
 				try
 				{
+					String POSTGRES_HOST=System.getenv(POSTGRES_HOST);
+					String POSTGRES_DB=System.getenv(POSTGRES_DB);
+					String POSTGRES_USER=System.getenv(POSTGRES_USER);
+					String POSTGRES_PASSWORD=System.getenv(POSTGRES_PASSWORD);
 					Class.forName("org.postgresql.Driver");
-					String jdbcUrl="jdbc:postgresql://52.183.96.227:5432/postgres";
-					String username="postgres";
-					String password="password";
-					
+					String jdbcUrl="jdbc:postgresql://"+POSTGRES_HOST+":5432/"+POSTGRES_DB;
+					String username=POSTGRES_USER;
+					String password=POSTGRES_PASSWORD;
+
+					// Class.forName("org.postgresql.Driver");
+					// String jdbcUrl="jdbc:postgresql://52.183.96.227:5432/postgres";
+					// String username="postgres";
+					// String password="password";					
 								
 					Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 					Statement statement = connection.createStatement();
