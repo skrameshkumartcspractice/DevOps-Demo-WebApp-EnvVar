@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  postgres_db:
+    image: postgres
+    container_name: postgres_container
+    networks:
+      - case_study
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./initial-table.sql:/docker-entrypoint-initdb.d/initial-table.sql      
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+  webapp:
+    build: ./
+    networks:
+      - case_study
+    ports:
+      - 8080:8080
+    environment: 
+      - POSTGRES_HOST=postgres_db
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    links:
+      - postgres_db
+    
+
+networks:
+  case_study:
+
+volumes:
+  postgresql:
+  postgresql_data:
